@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pharma Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Trirong:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#f2e6c9;--mute:#c9b88f;--gold:#c9a45c;--panel:rgba(36,24,40,.86);--pass:#c9efd6;--passbg:#2d4a39;--fail:#f6c8c0;--failbg:#582a2d;--wait:#f2dd9c;--waitbg:#5a4a20;--font:"IM Fell English","Trirong",serif}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100vh;}
+body{background:#000;color:var(--ink);font:17px/1.6 var(--font)}
+.hidden{display:none!important}
+#bg{display:none}
+input:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* ===== หน้าเปิด ===== */
+#intro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: url(BG1.jpg) center/cover no-repeat; 
+  container-type: inline-size;
+}
+
+.panel {
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  top: 15%;
+  bottom: 35%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.msg{width:100%;opacity:1;transition:opacity .6s}
+.msg.out{opacity:0}
+.big{font-size:7.5cqw;line-height:1.25;font-style:italic;text-shadow:0 0 12px rgba(201,164,92,.35)}
+.hint{position:absolute;bottom:3%;font-size:3.4cqw;font-style:italic;color:var(--mute);animation:pulse 2.4s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.sentence{font-size:4.4cqw;line-height:1.9;cursor:default}
+.sentence input{font:inherit;color:var(--gold);background:transparent;border:0;border-bottom:1px solid var(--gold);border-radius:0;text-align:center;width:6ch;max-width:100%;padding:0 2px}
+.sentence input::placeholder{color:rgba(201,164,92,.5);font-style:italic}
+.err{margin:6px 0 0;min-height:1.4em;font-size:3.6cqw;color:#f0a79c}
+.btn{margin-top:4px;font:italic 5cqw var(--font);color:var(--ink);background:rgba(201,164,92,.15);border:1px solid var(--gold);border-radius:3px;padding:.35em 1.4em;letter-spacing:.06em;cursor:pointer}
+.btn:hover{background:rgba(201,164,92,.3)}
+
+/* ===== หน้าผลลัพธ์ ===== */
+/* หน้าผลลัพธ์ */
+#result {
+  width: min(92vw, 850px);
+  margin: 20px auto;
+  background: url(Letter.png) center top / contain no-repeat;
+  position: relative;
+  color: #33221c;
+  aspect-ratio: 1 / 1.4; 
+  container-type: inline-size;
+}
+
+/* ภาพ BG1 อยู่ขอบล่างสุด ขยายเต็มความกว้างหน้าจอ (เต็มพื้นที่สีดำ) */
+#result::after {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: url(BG1.jpg) center bottom / cover no-repeat;
+  z-index: -1; /* ซ้อนอยู่ข้างหลัง Letter.png */
+  pointer-events: none;
+}
+
+#result main {
+  width: 72cqw;
+  margin: 0 auto;
+  padding-top: 18cqw; /* ดึงข้อมูลและตารางลงมาด้านล่าง */
+  position: relative;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 1cqw;
+}
+
+/* กรอบเลื่อนตารางคะแนน (ปรับให้สูงขึ้น) */
+.scroll-box {
+  max-height: 62cqw; /* ปรับเพิ่มความสูงของพื้นที่เลื่อน */
+  overflow-y: auto;
+  border: none;
+  padding: 0;
+  background: transparent;
+  width: 100%;
+  
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroll-box::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* ปุ่มย้อนกลับไปหน้าหลัก */
+.back-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(252, 252, 252, 0.3);
+  border: 1px solid #ffffff;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fcf7f76f;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 99;
+}
+.back-btn:hover {
+  background: rgba(108, 201, 92, 0.5);
+  transform: scale(1.05);
+}
+.back-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+.status{
+  margin: 0 0 4px;
+  font-size: calc(100% + 0.4cqw);
+  font-weight:700;
+  line-height:1.25;
+  text-align: center;
+}
+.who{
+  margin: 0 0 8px;
+  font-size: calc(90% + 0.3cqw);
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: center;
+}
+h2{
+  margin: 8px 0 4px;
+  font-size: calc(95% + 0.3cqw);
+  font-weight:600;
+  text-align: center; /* จัดชื่อรอบให้อยู่ตรงกลาง */
+}
+
+.score{
+  width: 75%;
+  margin: 0 auto 1em;
+  font-size: calc(85% + 0.2cqw);
+  border-collapse: collapse;
+}
+.score th,
+.score td{
+  border-bottom:1px solid rgba(154,76,50,.45);
+  text-align:center;
+  padding: 4px 2px;
+}
+.score th{font-weight:600;border-bottom:2px solid #9a4c32}
+.score tfoot td{font-weight:700;border-top:2px solid #9a4c32;border-bottom:0}
+.none{color:#888}
+#rounds {
+  width: 100%;
+}
+</style>
+</head>
+<body class="intro">
+<div id="bg"></div>
+
+<!-- หน้าเปิด -->
+<section id="intro">
+  <div class="stage">
+    <div class="panel">
+      <div id="msg" class="msg"></div>
+      <div id="hint" class="hint">· click anywhere ·</div>
+    </div>
+  </div>
+</section>
+
+<!-- หน้าผลลัพธ์ -->
+<section id="result" class="hidden">
+  <!-- ปุ่มไอคอนกลับหน้าหลัก -->
+  <button id="backHome" class="back-btn" title="กลับหน้าหลัก" aria-label="กลับหน้าหลัก">
+    <svg viewBox="0 0 24 24">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+  </button>
+
+  <main>
+    <div id="status" class="status"></div>
+    <p id="who" class="who"></p>
+    <div id="rounds"></div>
+  </main>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+<script>
+// ===== ตั้งค่า =====
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTSaIGDWW3Stb2DZE3hglnlQbXkySn74oEOPmXO68fXHugGsVutg9ckJfHUrKWfpYXEhK1Ht8DCBAZ/pub?gid=505430599&single=true&output=csv";
+
+const COL = {
+  id: "Code",
+  user: "Name",
+  status: "Status",
+  rounds: [
+    { title: "screening",
+      subjects: [
+        { name: "เคมี", score: "Score R1 chem" },
+        { name: "ชีวะ", score: "Score R1 bio"},
+        { name: "ฟิสิกส์", score: "Score R1 phy" }
+      ],
+      total: { score: "Score R1" , pct: "Percentile R1" }
+    },
+    { title: "paper based",
+      subjects: [
+        { name: "เคมี", score: "Score R2 chem" },
+        { name: "ชีวะ", score: "Score R2 bio" },
+        { name: "ฟิสิกส์", score: "Score R2 phy"}
+      ],
+      total: { score: "Score R2", pct: "Percentile R2" }
+    },
+    { title: "semi-final",
+      subjects: [
+        { name: "เคมี", score: "Score R3 chem" },
+        { name: "ชีวะ", score: "Score R3 bio"},
+        { name: "ฟิสิกส์", score: "Score R3 phy" }
+      ],
+      total: { score: "Score R3", pct: "Percentile R3" }
+    },
+    { title: "final",
+      subjects: [
+        { name: "Lab 1", score: "Score Lab 1" },
+        { name: "Lab 2", score: "Score Lab 2" }
+      ],
+       total: { score: "Score Lab", pct: "Percentile Lab" }
+    }
+  ]
+}
+
+const $ = id => document.getElementById(id);
+const norm = s => String(s ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const has = v => { const t = String(v ?? "").trim(); return t !== "" && !t.startsWith("#"); };
+
+/* ---------- โหลดข้อมูลชีต ---------- */
+let rows = [], ready = false, failed = "";
+fetch(CSV_URL)
+  .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+  .then(t => {
+    rows = Papa.parse(t, { header: true, skipEmptyLines: true, transformHeader: h => h.trim() }).data;
+    ready = true;
+  })
+  .catch(e => {
+    failed = location.protocol === "file:"
+      ? "เปิดไฟล์จากเครื่องโดยตรงไม่ได้ ต้องเปิดผ่านเว็บ เช่น GitHub Pages"
+      : "โหลดข้อมูลไม่สำเร็จ (" + e.message + ")";
+  });
+
+/* ---------- ลำดับข้อความหน้าเปิด ---------- */
+const STEPS = [
+  () => `<div class="big">Bonjour Madam</div>`,
+  () => `<div class="big">Let's we know ,<br>WHO ARE YOU ?</div>`,
+  () => `<div class="sentence">I'm <input id="nameIn" placeholder="name" autocomplete="off"> order <input id="codeIn" placeholder="code" autocomplete="off">, I solemnly swear that I'm an incomparable potioneer</div><p id="err" class="err" role="alert"></p><button class="btn" id="go">unfold!</button>`
+];
+const msg = $("msg");
+let step = 0, busy = false;
+msg.innerHTML = STEPS[0]();
+
+function setStep(n){
+  busy = true;
+  msg.classList.add("out");
+  setTimeout(() => {
+    step = n;
+    msg.innerHTML = STEPS[n]();
+    $("hint").classList.toggle("hidden", n === 2);
+    if (n === 2) bindForm();
+    msg.classList.remove("out");
+    busy = false;
+  }, 600);
+}
+document.addEventListener("click", (e) => { 
+  if (e.target.closest("#backHome")) return;
+  if (!busy && step < 2 && !$("intro").classList.contains("hidden")) setStep(step + 1); 
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !busy && step < 2 && !$("intro").classList.contains("hidden")) setStep(step + 1);
+});
+
+function bindForm(){
+  const n = $("nameIn"), c = $("codeIn");
+  const grow = (el, min) => el.style.width = Math.max(min, el.value.length + 1) + "ch";
+  n.addEventListener("input", () => grow(n, 6));
+  c.addEventListener("input", () => grow(c, 4));
+  [n, c].forEach(el => el.addEventListener("keydown", e => e.key === "Enter" && check()));
+  $("go").onclick = check;
+  n.focus();
+}
+
+function show(view){
+  $("intro").classList.toggle("hidden", view !== "intro");
+  $("result").classList.toggle("hidden", view !== "result");
+  document.body.classList.toggle("intro", view === "intro");
+  window.scrollTo(0, 0);
+}
+
+/* ---------- ปุ่มย้อนกลับไปหน้าหลัก ---------- */
+$("backHome").onclick = () => {
+  setStep(0);
+  show("intro");
+};
+
+function check(){
+  const err = $("err");
+  const id = norm($("codeIn").value), name = norm($("nameIn").value);
+  if (failed) { err.textContent = failed; return; }
+  if (!ready) { err.textContent = "กำลังโหลดข้อมูล รอสักครู่แล้วลองอีกครั้ง"; return; }
+  const p = id && name && rows.find(r => norm(r[COL.id]) === id && norm(r[COL.user]) === name);
+  if (!p) { err.textContent = "ไม่พบข้อมูล"; return; }
+  render(p);
+}
+  
+function cell(row, key) {
+  const v = row[key];
+  if (!has(v)) return '<span class="none">ไม่พบข้อมูล</span>';
+  const n = Number(v);
+  return esc(String(isNaN(n) ? v : Math.round(n * 100) / 100));
+}
+
+function renderRounds(row) {
+  const list = COL.rounds.filter(r => r.total && has(row[r.total.pct]));
+  
+  if (list.length === 0) {
+    $("rounds").innerHTML = '<p style="text-align:center;" class="none">ไม่พบข้อมูลผลการแข่งขัน</p>';
+    return;
+  }
+
+  $("rounds").innerHTML = `
+    <div class="scroll-box">
+      ${list.map(r => `
+        <h2>${r.title}</h2>
+        <table class="score">
+          <thead><tr><th>วิชา</th><th>คะแนน</th></tr></thead>
+          <tbody>
+            ${r.subjects.map(s => `
+              <tr><td>${s.name}</td><td>${cell(row, s.score)}</td></tr>`).join("")}
+          </tbody>
+          ${r.total ? `<tfoot><tr><td>รวม</td><td>${cell(row, r.total.score)}</td></tr><tr><td>เปอร์เซนไทล์รวม</td><td>${cell(row, r.total.pct)}</td></tr></tfoot>` : ""}
+        </table>
+      `).join("")}
+    </div>
+  `;
+}
+
+function render(p){
+  const st = p[COL.status], v = norm(st);
+  const cls = !has(st) ? "wait" : v.includes("ไม่") ? "fail" : (v.includes("ผ่าน") || v.includes("อันดับ")) ? "pass" : "wait";
+  $("status").className = "status " + cls;
+  $("status").textContent = has(st) ? st : "ไม่พบข้อมูล";
+  $("who").innerHTML = "ชื่อ: " + esc(p[COL.user]) + "<br>รหัส: " + esc(p[COL.id]);
+  renderRounds(p);
+  show("result");
+}
+</script>
+</body>
+</html>
