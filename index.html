@@ -12,7 +12,7 @@ html,body{margin:0;padding:0;min-height:100vh;}
 body{background:#000;color:var(--ink);font:17px/1.6 var(--font)}
 .hidden{display:none!important}
 #bg{display:none}
-input:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 
 /* ===== หน้าเปิด ===== */
 #intro {
@@ -35,10 +35,10 @@ input:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--gold);o
 
 .panel {
   position: absolute;
-  left: 20%;
-  right: 20%;
-  top: 15%;
-  bottom: 35%;
+  left: 22%;
+  right: 22%;
+  top: 8%;
+  bottom: 40%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -47,14 +47,14 @@ input:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--gold);o
 }
 .msg{width:100%;opacity:1;transition:opacity .6s}
 .msg.out{opacity:0}
-.big{font-size:7.5cqw;line-height:1.25;font-style:italic;text-shadow:0 0 12px rgba(201,164,92,.35)}
-.hint{position:absolute;bottom:3%;font-size:3.4cqw;font-style:italic;color:var(--mute);animation:pulse 2.4s infinite}
+.big{font-size:5cqw;line-height:1.25;font-style:italic;text-shadow:0 0 12px rgba(201,164,92,.35)}
+.hint{position:absolute;bottom:3%;font-size:2.4cqw;font-style:italic;color:var(--mute);animation:pulse 2.4s infinite}
 @keyframes pulse{50%{opacity:.3}}
-.sentence{font-size:4.4cqw;line-height:1.9;cursor:default}
-.sentence input{font:inherit;color:var(--gold);background:transparent;border:0;border-bottom:1px solid var(--gold);border-radius:0;text-align:center;width:6ch;max-width:100%;padding:0 2px}
+.sentence{font-size:2.8cqw;line-height:1.7;cursor:default}
+.sentence input{font:inherit;color:var(--gold);background:transparent;border:0;border-bottom:1px solid var(--gold);border-radius:0;text-align:center;width:6ch;max-width:100%;padding:0 2px;outline:none}
 .sentence input::placeholder{color:rgba(201,164,92,.5);font-style:italic}
-.err{margin:6px 0 0;min-height:1.4em;font-size:3.6cqw;color:#f0a79c}
-.btn{margin-top:4px;font:italic 5cqw var(--font);color:var(--ink);background:rgba(201,164,92,.15);border:1px solid var(--gold);border-radius:3px;padding:.35em 1.4em;letter-spacing:.06em;cursor:pointer}
+.err{margin:4px 0 0;min-height:1.4em;font-size:1.5cqw;color:#bbb77f}
+.btn{margin-top:2px;font:italic 3.2cqw var(--font);color:var(--ink);background:rgba(201,164,92,.15);border:1px solid var(--gold);border-radius:3px;padding:.25em 1.2em;letter-spacing:.06em;cursor:pointer}
 .btn:hover{background:rgba(201,164,92,.3)}
 
 /* ===== หน้าผลลัพธ์ ===== */
@@ -197,7 +197,7 @@ h2{
 <!-- หน้าผลลัพธ์ -->
 <section id="result" class="hidden">
   <!-- ปุ่มไอคอนกลับหน้าหลัก -->
-  <button id="backHome" class="back-btn" title="กลับหน้าหลัก" aria-label="กลับหน้าหลัก">
+  <button id="backHome" class="back-btn" title="Home" aria-label="Home">
     <svg viewBox="0 0 24 24">
       <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
     </svg>
@@ -276,9 +276,9 @@ fetch(CSV_URL)
 
 /* ---------- ลำดับข้อความหน้าเปิด ---------- */
 const STEPS = [
-  () => `<div class="big">Bonjour Madam</div>`,
+  () => `<div class="big">Welcome, Mysterious One</div>`,
   () => `<div class="big">Let's we know ,<br>WHO ARE YOU ?</div>`,
-  () => `<div class="sentence">I'm <input id="nameIn" placeholder="name" autocomplete="off"> order <input id="codeIn" placeholder="code" autocomplete="off">, I solemnly swear that I'm an incomparable potioneer</div><p id="err" class="err" role="alert"></p><button class="btn" id="go">unfold!</button>`
+  () => `<div class="sentence">I'm <input id="nameIn" placeholder="name" autocomplete="off"> order <input id="codeIn" placeholder="code" autocomplete="off">,<br> I solemnly swear that <br> I'm an incomparable potioneer</div><p id="err" class="err" role="alert"></p><button class="btn" id="go">unfold!</button>`
 ];
 const msg = $("msg");
 let step = 0, busy = false;
@@ -331,9 +331,9 @@ function check(){
   const err = $("err");
   const id = norm($("codeIn").value), name = norm($("nameIn").value);
   if (failed) { err.textContent = failed; return; }
-  if (!ready) { err.textContent = "กำลังโหลดข้อมูล รอสักครู่แล้วลองอีกครั้ง"; return; }
+  if (!ready) { err.textContent = "Loading..."; return; }
   const p = id && name && rows.find(r => norm(r[COL.id]) === id && norm(r[COL.user]) === name);
-  if (!p) { err.textContent = "ไม่พบข้อมูล"; return; }
+  if (!p) { err.textContent = "Unknown Alchemist !!!"; return; }
   render(p);
 }
   
@@ -357,7 +357,7 @@ function renderRounds(row) {
       ${list.map(r => `
         <h2>${r.title}</h2>
         <table class="score">
-          <thead><tr><th>วิชา</th><th>คะแนน</th></tr></thead>
+          <thead><tr><th>subject</th><th>score</th></tr></thead>
           <tbody>
             ${r.subjects.map(s => `
               <tr><td>${s.name}</td><td>${cell(row, s.score)}</td></tr>`).join("")}
@@ -374,7 +374,7 @@ function render(p){
   const cls = !has(st) ? "wait" : v.includes("ไม่") ? "fail" : (v.includes("ผ่าน") || v.includes("อันดับ")) ? "pass" : "wait";
   $("status").className = "status " + cls;
   $("status").textContent = has(st) ? st : "ไม่พบข้อมูล";
-  $("who").innerHTML = "ชื่อ: " + esc(p[COL.user]) + "<br>รหัส: " + esc(p[COL.id]);
+  $("who").innerHTML = "Name: " + esc(p[COL.user]) + "<br>Code: " + esc(p[COL.id]);
   renderRounds(p);
   show("result");
 }
