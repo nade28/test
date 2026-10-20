@@ -29,7 +29,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
   position: relative;
   width: 100%;
   height: 100%;
-  background: url(BG1.jpg) center/cover no-repeat; 
+  background: url(BG.jpg) center/cover no-repeat; 
   container-type: inline-size;
 }
 
@@ -77,7 +77,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: url(BG1.jpg) center bottom / cover no-repeat;
+  background: url(BG.jpg) center bottom / cover no-repeat;
   z-index: -1; /* ซ้อนอยู่ข้างหลัง Letter.png */
   pointer-events: none;
 }
@@ -117,11 +117,11 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
   position: fixed;
   top: 20px;
   right: 20px;
-  background: rgba(252, 252, 252, 0.3);
+  background: rgba(252, 252, 252, 0.2);
   border: 1px solid #ffffff;
   border-radius: 50%;
-  width: 42px;
-  height: 42px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,12 +131,12 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
   z-index: 99;
 }
 .back-btn:hover {
-  background: rgba(108, 201, 92, 0.5);
+  background: rgba(251, 252, 251, 0);
   transform: scale(1.05);
 }
 .back-btn svg {
-  width: 22px;
-  height: 22px;
+  width: 50px;
+  height: 50px;
   fill: currentColor;
 }
 
@@ -223,25 +223,25 @@ const COL = {
   rounds: [
     { title: "screening",
       subjects: [
-        { name: "เคมี", score: "Score R1 chem" },
-        { name: "ชีวะ", score: "Score R1 bio"},
-        { name: "ฟิสิกส์", score: "Score R1 phy" }
+        { name: "Chemistry", score: "Score R1 chem" },
+        { name: "Biology", score: "Score R1 bio"},
+        { name: "Physics", score: "Score R1 phy" }
       ],
       total: { score: "Score R1" , pct: "Percentile R1" }
     },
     { title: "paper based",
       subjects: [
-        { name: "เคมี", score: "Score R2 chem" },
-        { name: "ชีวะ", score: "Score R2 bio" },
-        { name: "ฟิสิกส์", score: "Score R2 phy"}
+        { name: "Chemistry", score: "Score R2 chem" },
+        { name: "Biology", score: "Score R2 bio" },
+        { name: "Physics", score: "Score R2 phy"},
+        { name: "Unseen", score: "Score R2 unseen"},
       ],
       total: { score: "Score R2", pct: "Percentile R2" }
     },
     { title: "semi-final",
       subjects: [
-        { name: "เคมี", score: "Score R3 chem" },
-        { name: "ชีวะ", score: "Score R3 bio"},
-        { name: "ฟิสิกส์", score: "Score R3 phy" }
+        { name: "Chemistry", score: "Score R3 chem" },
+        { name: "Biology", score: "Score R3 bio"},
       ],
       total: { score: "Score R3", pct: "Percentile R3" }
     },
@@ -339,7 +339,7 @@ function check(){
   
 function cell(row, key) {
   const v = row[key];
-  if (!has(v)) return '<span class="none">ไม่พบข้อมูล</span>';
+  if (!has(v)) return '<span class="none">Not found</span>';
   const n = Number(v);
   return esc(String(isNaN(n) ? v : Math.round(n * 100) / 100));
 }
@@ -362,7 +362,7 @@ function renderRounds(row) {
             ${r.subjects.map(s => `
               <tr><td>${s.name}</td><td>${cell(row, s.score)}</td></tr>`).join("")}
           </tbody>
-          ${r.total ? `<tfoot><tr><td>รวม</td><td>${cell(row, r.total.score)}</td></tr><tr><td>เปอร์เซนไทล์รวม</td><td>${cell(row, r.total.pct)}</td></tr></tfoot>` : ""}
+          ${r.total ? `<tfoot><tr><td>Total</td><td>${cell(row, r.total.score)}</td></tr><tr><td>Percentile</td><td>${cell(row, r.total.pct)}</td></tr></tfoot>` : ""}
         </table>
       `).join("")}
     </div>
