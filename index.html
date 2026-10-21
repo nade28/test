@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pharma Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Trirong:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#f2e6c9;--mute:#c9b88f;--gold:#c9a45c;--panel:rgba(36,24,40,.86);--pass:#c9efd6;--passbg:#2d4a39;--fail:#f6c8c0;--failbg:#582a2d;--wait:#f2dd9c;--waitbg:#5a4a20;--font:"IM Fell English","Trirong",serif}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100vh;}
+body{background:#000;color:var(--ink);font:17px/1.6 var(--font)}
+.hidden{display:none!important}
+#bg{display:none}
+button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* ===== หน้าเปิด ===== */
+#intro {
+  width: 100%;
+  background: #000;
+}
+.logo1 {
+  position: absolute;
+  top: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 20%;
+  width: auto;
+  max-width: 60%;
+  object-fit: contain;
+  pointer-events: none;
+  
+}
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  cursor: pointer;
+  background: url(BG.jpg) center/cover no-repeat;
+  container-type: inline-size;
+  
+}
+
+.panel {
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  top: 16%;
+  bottom: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.msg{width:100%;opacity:1;transform:none;filter:none;transition:opacity .6s ease,transform .6s ease,filter .6s ease}
+.msg.out{opacity:0;transform:translateY(14px);filter:blur(6px)}
+.w{display:inline-block;white-space:nowrap}
+.ch{display:inline-block;opacity:0;animation:chIn .7s ease forwards}
+@keyframes chIn{from{opacity:0;transform:translateY(.45em);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+.late{opacity:0;animation:lateIn .8s ease forwards}
+@keyframes lateIn{from{opacity:0;transform:translateY(.3em)}to{opacity:1;transform:none}}
+.big{font-size:5cqw;line-height:1.25;font-style:italic;text-shadow:0 0 12px rgba(201,164,92,.35)}
+.hint{position:absolute;left:0;right:0;bottom:4%;text-align:center;font-size:2.4cqw;font-style:italic;color:var(--mute);animation:pulse 2.4s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.sentence{font-size:2.8cqw;line-height:1.7;cursor:default}
+.sentence input{font:inherit;color:var(--gold);background:transparent;border:0;border-bottom:1px solid var(--gold);border-radius:0;text-align:center;width:6ch;max-width:100%;padding:0 2px;outline:none}
+.sentence input::placeholder{color:rgba(201,164,92,.5);font-style:italic}
+.err{margin:4px 0 0;min-height:1.4em;font-size:1.8cqw;color:#9e0000}
+.btn{margin-top:0px;font:italic 2.5cqw var(--font);color:var(--ink);background:rgba(201, 165, 92, 0);border:1px solid var(--gold);border-radius:15px;padding:.15em 0.8em;letter-spacing:.06em;cursor:pointer}
+.btn:hover{background:rgba(201, 165, 92, 0.132)}
+
+
+/* ===== พื้นที่ข้อมูลงาน (ใต้ภาพหน้าแรก) ===== */
+.info{
+  background:#000;
+  padding:48px 20px 64px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:20px;
+  cursor:default;
+}
+.info-title{
+  margin:0;
+  font-size:clamp(22px,4vw,30px);
+  font-style:italic;
+  font-weight:400;
+  color:var(--ink);
+  text-align:center;
+  text-shadow:0 0 12px rgba(201,164,92,.35);
+}
+.links{
+  width:min(100%,720px);
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:30px;
+}
+.link{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:16px 18px;
+  color:var(--ink);
+  text-decoration:none;
+  background:rgba(201,164,92,.08);
+  border:1px solid rgba(201,164,92,.55);
+  border-radius:15px;
+  transition:background .2s,border-color .2s;
+}
+.link:hover{background:rgba(201,164,92,.22);border-color:var(--gold)}
+.link b{font-size:1.1em;font-weight:600;font-style:italic}
+.link span{font-size:.85em;color:var(--mute)}
+@media (max-width:520px){.links{grid-template-columns:1fr}}
+
+/* ===== หน้าผลลัพธ์ ===== */
+#result {
+  width: min(92vw, 850px);
+  margin: 20px auto;
+  background: url(Letter.png) center top / contain no-repeat;
+  position: relative;
+  color: #33221c;
+  aspect-ratio: 1 / 1.4; 
+  container-type: inline-size;
+}
+.logo2 {
+  position: absolute;
+  top: 7.5%;
+  left: 50%;
+  opacity: 75%;
+  transform: translateX(-50%);
+  height: 12%;
+  width: auto;
+  max-width: 60%;
+  object-fit: contain;
+  pointer-events: none;
+  
+}
+
+/* ภาพ BG1 อยู่ขอบล่างสุด ขยายเต็มความกว้างหน้าจอ (เต็มพื้นที่สีดำ) */
+#result::after {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: url(BG.jpg) center bottom / cover no-repeat;
+  z-index: -1; /* ซ้อนอยู่ข้างหลัง Letter.png */
+  pointer-events: none;
+}
+
+#result main {
+  width: 72cqw;
+  margin: 0 auto;
+  padding-top: 25cqw; /* ดึงข้อมูลและตารางลงมาด้านล่าง */
+  position: relative;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 1cqw;
+  font-size: max(9px, 2cqw); /* ฐานฟอนต์: 2% ของความกว้างกระดาษ (ที่ 850px ≈ 17px) ทุกอย่างข้างในใช้ em ตามฐานนี้ */
+}
+
+/* กรอบเลื่อนตารางคะแนน */
+.scroll-box {
+  max-height: 45cqw;
+  overflow-y: auto;
+  border: none;
+  padding: 0;
+  background: transparent;
+  width: 100%;
+  
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroll-box::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* ปุ่มย้อนกลับไปหน้าหลัก */
+.back-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(252, 252, 252, 0.2);
+  border: 1px solid #ffffff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fcf7f76f;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 99;
+}
+.back-btn:hover {
+  background: rgba(251, 252, 251, 0);
+  transform: scale(1.05);
+}
+.back-btn svg {
+  width: 50px;
+  height: 50px;
+  fill: currentColor;
+}
+
+.status{
+  margin: 0 0 .1em;
+  font-size: 1.2em;
+  font-weight:700;
+  line-height:1;
+  text-align: center;
+}
+.who{
+  margin: 0 0 .25em;
+  font-size: 1.05em;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+}
+h2{
+  margin: .5em 0 .25em;
+  font-size: 1.2em;
+  font-weight:600;
+  text-align: center;
+}
+
+.score{
+  width: 75%;
+  margin: 0 auto 1em;
+  font-size: .85em;
+  border-collapse: collapse;
+}
+.score th,
+.score td{
+  border-bottom:1px solid rgba(154,76,50,.45);
+  text-align:center;
+  padding: .3em .15em;
+}
+.score th{font-weight:500;border-bottom:2px solid #9a4c32}
+.score tfoot td{font-weight:500;border-top:2px solid #9a4c32;border-bottom:0}
+.none{color:#888}
+#rounds {
+  width: 100%;
+}
+
+/* ===== หัวข้อ / เส้นกั้น ===== */
+.announce{margin:0;text-align:center;font-size:1.25em;font-style:italic;letter-spacing:.08em;color:#6b3a28}
+.divider{width:25%;height:0;margin:3px auto 8px;border:0;border-top:1.5px solid rgba(154, 95, 50, 0.7)}
+
+/* ===== กล่องชื่อรอบ + สีแยกรอบ ===== */
+.round{--c:#9a4c32}
+.round-head{
+  width:75%;margin:.6em auto .4em;padding:.25em .4em;text-align:center;
+  border:0 solid var(--c);border-radius:15px;
+  background:color-mix(in srgb,var(--c) 12%,transparent)
+}
+.round-head small{display:block;font-size:.75em;font-style:italic;letter-spacing:.06em;color:var(--c);opacity:.85}
+.round-head h2{margin:0;color:var(--c)}
+.score{margin:0 auto 10px}
+.score th{background: transparent(in srgb,var(--c) 18%,transparent);color:var(--c);border-bottom:2px solid var(--c)}
+.score td{border-bottom:1px solid color-mix(in srgb,var(--c) 45%,transparent)}
+.score tfoot td{border-top:2px solid var(--c);border-bottom:0}
+
+/* ===== ปุ่ม learn more ===== */
+.learn-wrap{text-align:center;margin:0 0 1.2em}
+.learn{
+  display:inline-block;padding:.15em 1.1em;font-style:italic;font-size:.9em;letter-spacing:.05em;
+  color:var(--c);text-decoration:none;border:1px solid var(--c);border-radius:15px;
+  transition:background .2s,color .2s
+}
+.learn:hover{background:var(--c);color:#fff}
+.ch.soft{animation:chSoft .6s ease forwards}
+@keyframes chSoft{from{opacity:0;transform:translateY(.15em)}to{opacity:1;transform:none}}
+.late.soft{animation:lateSoft .6s ease forwards}
+@keyframes lateSoft{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body class="intro">
+<div id="bg"></div>
+
+<!-- หน้าเปิด -->
+<section id="intro">
+  <div class="stage"><img class="logo1" src="logo1.png">
+    <div id="hint" class="hint">· click anywhere ·</div>
+    <div class="panel">
+      <div id="msg" class="msg"></div>
+    </div>
+  </div>
+
+  <div class="info">
+    <h2 class="info-title">⊹₊˚‧︵‿₊୨ Find us ୧₊‿︵‧˚₊⊹</h2>
+    <div class="links">
+      <a class="link" href="https://www.instagram.com/pharmachallenge.official/" target="_blank" rel="noopener">
+        <b>Instagram </b><span> PharmaChallenge </span>
+      </a>
+      <a class="link" href="https://www.instagram.com/smo.mupy/?hl=en" target="_blank" rel="noopener">
+        <b>Instagram </b><span>Official MUPY</span>
+      </a>
+      <a class="link" href="https://pharmacy.mahidol.ac.th/admissions/main.php" target="_blank" rel="noopener">
+        <b>Website</b><span>Fuculty of Pharmacy</span>
+      </a>
+      <a class="link" href="https://tcas.mahidol.ac.th/" target="_blank" rel="noopener">
+        <b>Website</b><span>Mahidol University</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- หน้าผลลัพธ์ -->
+<section id="result" class="hidden">
+  <!-- ปุ่มไอคอนกลับหน้าหลัก -->
+  <button id="backHome" class="back-btn" title="Home" aria-label="Home">
+    <svg viewBox="0 0 24 24">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+  </button>
+  <img class="logo2" src="logo2.png">
+  <main>
+    <p id="announce" class="announce">Exam Results Announcement</p>
+    <div id="status" class="status"></div>
+    <hr class="divider">
+    <p id="who" class="who"></p>
+    <div id="rounds"></div>
+  </main>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+<script>
+// ===== ตั้งค่า =====
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTSaIGDWW3Stb2DZE3hglnlQbXkySn74oEOPmXO68fXHugGsVutg9ckJfHUrKWfpYXEhK1Ht8DCBAZ/pub?gid=505430599&single=true&output=csv";
+
+const COL = {
+  id: "Code",
+  user: "Name",
+  status: "Status",
+  rounds: [
+    { title: "Screening",
+      subjects: [
+        { name: "Chemistry", score: "Score R1 chem" },
+        { name: "Biology", score: "Score R1 bio"},
+        { name: "Physics", score: "Score R1 phy" }
+      ],
+      total: { score: "Score R1" , pct: "Percentile R1" }
+    },
+    { title: "Paper based",
+      subjects: [
+        { name: "Chemistry", score: "Score R2 chem" },
+        { name: "Biology", score: "Score R2 bio" },
+        { name: "Physics", score: "Score R2 phy"},
+        { name: "Unseen", score: "Score R2 unseen"},
+      ],
+      total: { score: "Score R2", pct: "Percentile R2" }
+    },
+    { title: "Semi-final",
+      subjects: [
+        { name: "Chemistry", score: "Score R3 chem" },
+        { name: "Biology", score: "Score R3 bio"},
+      ],
+      total: { score: "Score R3", pct: "Percentile R3" }
+    },
+    { title: "Final",
+      subjects: [
+        { name: "Lab 1", score: "Score Lab 1" },
+        { name: "Lab 2", score: "Score Lab 2" }
+      ],
+       total: { score: "Score Lab", pct: "Percentile Lab" }
+    }
+  ]
+}
+
+const ROUND_THEME = [
+  { c: "#85583f", link: "screening.html" },   // Screening
+  { c: "#556b2f", link: "paperbased.html" },  // Paper based
+  { c: "#3d5a8a", link: "semifinal.html" },   // Semi-final
+  { c: "#7a4a8a", link: "final.html" }        // Final
+];
+
+const $ = id => document.getElementById(id);
+const norm = s => String(s ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const has = v => { const t = String(v ?? "").trim(); return t !== "" && !t.startsWith("#"); };
+
+/* ---------- โหลดข้อมูลชีต ---------- */
+let rows = [], ready = false, failed = "";
+fetch(CSV_URL)
+  .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+  .then(t => {
+    rows = Papa.parse(t, { header: true, skipEmptyLines: true, transformHeader: h => h.trim() }).data;
+    ready = true;
+  })
+  .catch(e => {
+    failed = location.protocol === "file:"
+      ? "เปิดไฟล์จากเครื่องโดยตรงไม่ได้ ต้องเปิดผ่านเว็บ เช่น GitHub Pages"
+      : "โหลดข้อมูลไม่สำเร็จ (" + e.message + ")";
+  });
+
+/* ---------- ลำดับข้อความหน้าเปิด ---------- */
+const STEPS = [
+  () => `<div class="big">Welcome, Mysterious One</div>`,
+  () => `<div class="big">Let we know ,<br>WHO ARE YOU ?</div>`,
+  () => `<div class="sentence"> I'm <input id="nameIn" placeholder="name" autocomplete="off"> order <input id="codeIn" placeholder="code" autocomplete="off">,<br> I solemnly swear that <br> I'm an incomparable potioneer.</div><p id="err" class="err" role="alert"></p><button class="btn" id="go">unfold!</button>`
+];
+const msg = $("msg");
+
+/* แยกข้อความเป็นทีละอักษร แล้วหน่วงเวลาให้เข้าทีละตัว */
+function animateLetters(root, opt = {}){
+  const nodes = [];
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  const total = nodes.reduce((n, x) => n + (x.nodeType === 3 ? x.textContent.replace(/\s/g, "").length : 0), 0);
+  const step = Math.min(opt.max || 45, Math.max(opt.min || 18, (opt.span || 1800) / Math.max(total, 1)));
+  let i = 0;
+  nodes.forEach(node => {
+    if (node.nodeType === 1) {
+      if (node.matches(opt.late || "input,button")) { node.classList.add("late"); if (opt.soft) node.classList.add("soft");}
+      return;
+    }
+    if (!node.textContent.trim()) return;
+    const frag = document.createDocumentFragment();
+    node.textContent.split(/(\s+)/).forEach(part => {
+      if (!part) return;
+      if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+      const w = document.createElement("span");
+      w.className = "w";
+      Array.from(part).forEach(c => {
+        const ch = document.createElement("span");
+        ch.className = "ch" + (opt.soft ? " soft" : "");
+        ch.textContent = c;
+        ch.style.animationDelay = (i++ * step) + "ms";
+        w.appendChild(ch);
+      });
+      frag.appendChild(w);
+    });
+    node.replaceWith(frag);
+  }); 
+  
+}
+
+let step = 0, busy = false;
+msg.innerHTML = STEPS[0]();
+animateLetters(msg);
+
+function setStep(n){
+  busy = true;
+  msg.classList.add("out");
+  setTimeout(() => {
+    step = n;
+    msg.innerHTML = STEPS[n]();
+    animateLetters(msg);
+    $("hint").classList.toggle("hidden", n === 2);
+    if (n === 2) bindForm();
+    msg.classList.remove("out");
+    busy = false;
+  }, 600);
+}
+document.addEventListener("click", (e) => { 
+  if (e.target.closest("#backHome") || e.target.closest(".info")) return;
+  if (!busy && step < 2 && !$("intro").classList.contains("hidden")) setStep(step + 1); 
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !busy && step < 2 && !$("intro").classList.contains("hidden")) setStep(step + 1);
+});
+
+function bindForm(){
+  const n = $("nameIn"), c = $("codeIn");
+  const grow = (el, min) => el.style.width = Math.max(min, el.value.length + 1) + "ch";
+  n.addEventListener("input", () => grow(n, 6));
+  c.addEventListener("input", () => grow(c, 4));
+  [n, c].forEach(el => el.addEventListener("keydown", e => e.key === "Enter" && check()));
+  $("go").onclick = check;
+  n.focus();
+}
+
+function show(view){
+  $("intro").classList.toggle("hidden", view !== "intro");
+  $("result").classList.toggle("hidden", view !== "result");
+  document.body.classList.toggle("intro", view === "intro");
+  window.scrollTo(0, 0);
+}
+
+/* ---------- ปุ่มย้อนกลับไปหน้าหลัก ---------- */
+$("backHome").onclick = () => {
+  setStep(0);
+  show("intro");
+};
+
+function check(){
+  const err = $("err");
+  const id = norm($("codeIn").value), name = norm($("nameIn").value);
+  if (failed) { err.textContent = failed; return; }
+  if (!ready) { err.textContent = "Loading..."; return; }
+  const p = id && name && rows.find(r => norm(r[COL.id]) === id && norm(r[COL.user]) === name);
+  if (!p) { err.textContent = "Unknown Alchemist !!!"; return; }
+  render(p);
+}
+  
+function cell(row, key) {
+  const v = row[key];
+  if (!has(v)) return '<span class="none">Not found</span>';
+  const n = Number(v);
+  return esc(String(isNaN(n) ? v : Math.round(n * 100) / 100));
+}
+
+function renderRounds(row) {
+  const list = COL.rounds.filter(r => r.total && has(row[r.total.pct]));
+  
+  if (list.length === 0) {
+    $("rounds").innerHTML = '<p style="text-align:center;" class="none">ไม่พบข้อมูลผลการแข่งขัน</p>';
+    return;
+  }
+
+  $("rounds").innerHTML = `
+    <div class="scroll-box">
+      ${list.map(r => { const t = ROUND_THEME[COL.rounds.indexOf(r)] || ROUND_THEME[0]; return `
+        <div class="round" style="--c:${t.c}">
+        <div class="round-head"><small>Examination session</small><h2>${r.title}</h2></div>
+        <table class="score">
+          <thead><tr><th>Subject</th><th>Score</th></tr></thead>
+          <tbody>
+            ${r.subjects.map(s => `
+              <tr><td>${s.name}</td><td>${cell(row, s.score)}</td></tr>`).join("")}
+          </tbody>
+          ${r.total ? `<tfoot><tr><td>Total</td><td>${cell(row, r.total.score)}</td></tr><tr><td>Percentile</td><td>${cell(row, r.total.pct)}</td></tr></tfoot>` : ""}
+        </table>
+        <div class="learn-wrap"><a class="learn" href="${t.link}" target="_blank" rel="noopener">Learn more</a></div>
+        </div>
+      `}).join("")}
+    </div>
+  `;
+}
+
+function render(p){
+  const an = $("announce");
+  if (!an.dataset.t) an.dataset.t = an.textContent;
+  an.textContent = an.dataset.t;
+  const st = p[COL.status], v = norm(st);
+  const cls = !has(st) ? "wait" : v.includes("ไม่") ? "fail" : (v.includes("ผ่าน") || v.includes("อันดับ")) ? "pass" : "wait";
+  $("status").className = "status " + cls;
+  $("status").textContent = has(st) ? st : "ไม่พบข้อมูล";
+  $("who").innerHTML = "Name: " + esc(p[COL.user]) + "<br>Code: " + esc(p[COL.id]);
+  renderRounds(p);
+  show("result");
+  animateLetters(document.querySelector("#result main"), { soft: true, max: 30, min: 8, span: 2500, late: "a.learn" });
+}
+</script>
+</body>
+</html>
