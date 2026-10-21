@@ -19,7 +19,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
   width: 100%;
   background: #000;
 }
-.logo {
+.logo1 {
   position: absolute;
   top: 2%;
   left: 50%;
@@ -55,15 +55,20 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
   justify-content: center;
   text-align: center;
 }
-.msg{width:100%;opacity:1;transition:opacity .6s}
-.msg.out{opacity:0}
+.msg{width:100%;opacity:1;transform:none;filter:none;transition:opacity .6s ease,transform .6s ease,filter .6s ease}
+.msg.out{opacity:0;transform:translateY(14px);filter:blur(6px)}
+.w{display:inline-block;white-space:nowrap}
+.ch{display:inline-block;opacity:0;animation:chIn .7s ease forwards}
+@keyframes chIn{from{opacity:0;transform:translateY(.45em);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+.late{opacity:0;animation:lateIn .8s ease forwards}
+@keyframes lateIn{from{opacity:0;transform:translateY(.3em)}to{opacity:1;transform:none}}
 .big{font-size:5cqw;line-height:1.25;font-style:italic;text-shadow:0 0 12px rgba(201,164,92,.35)}
 .hint{position:absolute;left:0;right:0;bottom:4%;text-align:center;font-size:2.4cqw;font-style:italic;color:var(--mute);animation:pulse 2.4s infinite}
 @keyframes pulse{50%{opacity:.3}}
 .sentence{font-size:2.8cqw;line-height:1.7;cursor:default}
 .sentence input{font:inherit;color:var(--gold);background:transparent;border:0;border-bottom:1px solid var(--gold);border-radius:0;text-align:center;width:6ch;max-width:100%;padding:0 2px;outline:none}
 .sentence input::placeholder{color:rgba(201,164,92,.5);font-style:italic}
-.err{margin:4px 0 0;min-height:1.4em;font-size:1ssscqw;color:#9e0000}
+.err{margin:4px 0 0;min-height:1.4em;font-size:1.8cqw;color:#9e0000}
 .btn{margin-top:0px;font:italic 2.5cqw var(--font);color:var(--ink);background:rgba(201, 165, 92, 0);border:1px solid var(--gold);border-radius:15px;padding:.15em 0.8em;letter-spacing:.06em;cursor:pointer}
 .btn:hover{background:rgba(201, 165, 92, 0.132)}
 
@@ -121,6 +126,19 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
   aspect-ratio: 1 / 1.4; 
   container-type: inline-size;
 }
+.logo2 {
+  position: absolute;
+  top: 7.5%;
+  left: 50%;
+  opacity: 75%;
+  transform: translateX(-50%);
+  height: 12%;
+  width: auto;
+  max-width: 60%;
+  object-fit: contain;
+  pointer-events: none;
+  
+}
 
 /* ภาพ BG1 อยู่ขอบล่างสุด ขยายเต็มความกว้างหน้าจอ (เต็มพื้นที่สีดำ) */
 #result::after {
@@ -138,7 +156,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
 #result main {
   width: 72cqw;
   margin: 0 auto;
-  padding-top: 18cqw; /* ดึงข้อมูลและตารางลงมาด้านล่าง */
+  padding-top: 25cqw; /* ดึงข้อมูลและตารางลงมาด้านล่าง */
   position: relative;
   text-align: left;
   display: flex;
@@ -148,7 +166,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
 
 /* กรอบเลื่อนตารางคะแนน (ปรับให้สูงขึ้น) */
 .scroll-box {
-  max-height: 62cqw; /* ปรับเพิ่มความสูงของพื้นที่เลื่อน */
+  max-height: 45cqw; /* ปรับเพิ่มความสูงของพื้นที่เลื่อน */
   overflow-y: auto;
   border: none;
   padding: 0;
@@ -194,22 +212,22 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
 }
 
 .status{
-  margin: 0 0 4px;
+  margin: 0 0 2px;
   font-size: calc(100% + 0.4cqw);
   font-weight:700;
-  line-height:1.25;
+  line-height:1;
   text-align: center;
 }
 .who{
-  margin: 0 0 8px;
+  margin: 0 0 4px;
   font-size: calc(90% + 0.3cqw);
-  font-weight: 400;
-  line-height: 1.4;
+  font-weight: 500;
+  line-height: 1;
   text-align: center;
 }
 h2{
   margin: 8px 0 4px;
-  font-size: calc(95% + 0.3cqw);
+  font-size: calc(100% + 0.3cqw);
   font-weight:600;
   text-align: center; /* จัดชื่อรอบให้อยู่ตรงกลาง */
 }
@@ -217,7 +235,7 @@ h2{
 .score{
   width: 75%;
   margin: 0 auto 1em;
-  font-size: calc(85% + 0.2cqw);
+  font-size: calc(75% + 0.2cqw);
   border-collapse: collapse;
 }
 .score th,
@@ -226,12 +244,43 @@ h2{
   text-align:center;
   padding: 4px 2px;
 }
-.score th{font-weight:600;border-bottom:2px solid #9a4c32}
-.score tfoot td{font-weight:700;border-top:2px solid #9a4c32;border-bottom:0}
+.score th{font-weight:500;border-bottom:2px solid #9a4c32}
+.score tfoot td{font-weight:500;border-top:2px solid #9a4c32;border-bottom:0}
 .none{color:#888}
 #rounds {
   width: 100%;
 }
+
+/* ===== หัวข้อ / เส้นกั้น ===== */
+.announce{margin:0;text-align:center;font-size:calc(100% + 0.5cqw);font-style:italic;letter-spacing:.08em;color:#6b3a28}
+.divider{width:25%;height:0;margin:3px auto 8px;border:0;border-top:1.5px solid rgba(154, 95, 50, 0.7)}
+
+/* ===== กล่องชื่อรอบ + สีแยกรอบ ===== */
+.round{--c:#9a4c32}
+.round-head{
+  width:75%;margin:10px auto 6px;padding:4px 6px;text-align:center;
+  border:0px solid var(--c);border-radius:15px;
+  background:color-mix(in srgb,var(--c) 12%,transparent)
+}
+.round-head small{display:block;font-size:.75em;font-style:italic;letter-spacing:.06em;color:var(--c);opacity:.85}
+.round-head h2{margin:0;color:var(--c)}
+.score{margin:0 auto 10px}
+.score th{background: transparent(in srgb,var(--c) 18%,transparent);color:var(--c);border-bottom:2px solid var(--c)}
+.score td{border-bottom:1px solid color-mix(in srgb,var(--c) 45%,transparent)}
+.score tfoot td{border-top:2px solid var(--c);border-bottom:0}
+
+/* ===== ปุ่ม learn more ===== */
+.learn-wrap{text-align:center;margin:0 0 1.2em}
+.learn{
+  display:inline-block;padding:.15em 1.1em;font-style:italic;font-size:.9em;letter-spacing:.05em;
+  color:var(--c);text-decoration:none;border:1px solid var(--c);border-radius:15px;
+  transition:background .2s,color .2s
+}
+.learn:hover{background:var(--c);color:#fff}
+.ch.soft{animation:chSoft .6s ease forwards}
+@keyframes chSoft{from{opacity:0;transform:translateY(.15em)}to{opacity:1;transform:none}}
+.late.soft{animation:lateSoft .6s ease forwards}
+@keyframes lateSoft{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body class="intro">
@@ -239,7 +288,7 @@ h2{
 
 <!-- หน้าเปิด -->
 <section id="intro">
-  <div class="stage"><img class="logo" src="logo.png">
+  <div class="stage"><img class="logo1" src="logo1.png">
     <div id="hint" class="hint">· click anywhere ·</div>
     <div class="panel">
       <div id="msg" class="msg"></div>
@@ -273,9 +322,11 @@ h2{
       <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
     </svg>
   </button>
-
+  <img class="logo2" src="logo2.png">
   <main>
+    <p id="announce" class="announce">Exam Results Announcement</p>
     <div id="status" class="status"></div>
+    <hr class="divider">
     <p id="who" class="who"></p>
     <div id="rounds"></div>
   </main>
@@ -326,6 +377,13 @@ const COL = {
   ]
 }
 
+const ROUND_THEME = [
+  { c: "#85583f", link: "screening.html" },   // Screening
+  { c: "#556b2f", link: "paperbased.html" },  // Paper based
+  { c: "#3d5a8a", link: "semifinal.html" },   // Semi-final
+  { c: "#7a4a8a", link: "final.html" }        // Final
+];
+
 const $ = id => document.getElementById(id);
 const norm = s => String(s ?? "").trim().replace(/\s+/g, " ").toLowerCase();
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -352,8 +410,48 @@ const STEPS = [
   () => `<div class="sentence"> I'm <input id="nameIn" placeholder="name" autocomplete="off"> order <input id="codeIn" placeholder="code" autocomplete="off">,<br> I solemnly swear that <br> I'm an incomparable potioneer.</div><p id="err" class="err" role="alert"></p><button class="btn" id="go">unfold!</button>`
 ];
 const msg = $("msg");
+
+/* แยกข้อความเป็นทีละอักษร แล้วหน่วงเวลาให้เข้าทีละตัว */
+// เดิม: function animateLetters(root){
+function animateLetters(root, opt = {}){
+  const nodes = [];
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  const total = nodes.reduce((n, x) => n + (x.nodeType === 3 ? x.textContent.replace(/\s/g, "").length : 0), 0);
+  // เดิม: const step = Math.min(45, Math.max(18, 1800 / Math.max(total, 1)));
+  const step = Math.min(opt.max || 45, Math.max(opt.min || 18, (opt.span || 1800) / Math.max(total, 1)));
+  let i = 0;
+  nodes.forEach(node => {
+    if (node.nodeType === 1) {
+      // เดิม: if (node.matches("input,button")) { node.classList.add("late");
+      if (node.matches(opt.late || "input,button")) { node.classList.add("late"); if (opt.soft) node.classList.add("soft");}
+      return;
+    }
+    if (!node.textContent.trim()) return;
+    const frag = document.createDocumentFragment();
+    node.textContent.split(/(\s+)/).forEach(part => {
+      if (!part) return;
+      if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+      const w = document.createElement("span");
+      w.className = "w";
+      Array.from(part).forEach(c => {
+        const ch = document.createElement("span");
+        // เดิม: ch.className = "ch";
+        ch.className = "ch" + (opt.soft ? " soft" : "");
+        ch.textContent = c;
+        ch.style.animationDelay = (i++ * step) + "ms";
+        w.appendChild(ch);
+      });
+      frag.appendChild(w);
+    });
+    node.replaceWith(frag);
+  }); 
+  
+}
+
 let step = 0, busy = false;
 msg.innerHTML = STEPS[0]();
+animateLetters(msg);
 
 function setStep(n){
   busy = true;
@@ -361,6 +459,7 @@ function setStep(n){
   setTimeout(() => {
     step = n;
     msg.innerHTML = STEPS[n]();
+    animateLetters(msg);
     $("hint").classList.toggle("hidden", n === 2);
     if (n === 2) bindForm();
     msg.classList.remove("out");
@@ -425,8 +524,9 @@ function renderRounds(row) {
 
   $("rounds").innerHTML = `
     <div class="scroll-box">
-      ${list.map(r => `
-        <h2>${r.title}</h2>
+      ${list.map(r => { const t = ROUND_THEME[COL.rounds.indexOf(r)] || ROUND_THEME[0]; return `
+        <div class="round" style="--c:${t.c}">
+        <div class="round-head"><small>Examination session</small><h2>${r.title}</h2></div>
         <table class="score">
           <thead><tr><th>Subject</th><th>Score</th></tr></thead>
           <tbody>
@@ -435,12 +535,17 @@ function renderRounds(row) {
           </tbody>
           ${r.total ? `<tfoot><tr><td>Total</td><td>${cell(row, r.total.score)}</td></tr><tr><td>Percentile</td><td>${cell(row, r.total.pct)}</td></tr></tfoot>` : ""}
         </table>
-      `).join("")}
+        <div class="learn-wrap"><a class="learn" href="${t.link}" target="_blank" rel="noopener">Learn more</a></div>
+        </div>
+      `}).join("")}
     </div>
   `;
 }
 
 function render(p){
+  const an = $("announce");
+  if (!an.dataset.t) an.dataset.t = an.textContent;
+  an.textContent = an.dataset.t;
   const st = p[COL.status], v = norm(st);
   const cls = !has(st) ? "wait" : v.includes("ไม่") ? "fail" : (v.includes("ผ่าน") || v.includes("อันดับ")) ? "pass" : "wait";
   $("status").className = "status " + cls;
@@ -448,6 +553,7 @@ function render(p){
   $("who").innerHTML = "Name: " + esc(p[COL.user]) + "<br>Code: " + esc(p[COL.id]);
   renderRounds(p);
   show("result");
+  animateLetters(document.querySelector("#result main"), { soft: true, max: 30, min: 8, span: 2500, late: "a.learn" });
 }
 </script>
 </body>
